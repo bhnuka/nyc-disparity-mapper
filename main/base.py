@@ -1,10 +1,9 @@
-import os
 import sys
+import os
 import geopandas as gpd
 import folium
 import webbrowser
 import pandas as pd
-import branca.colormap as cm
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -15,16 +14,6 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
-
-if getattr(sys, 'frozen', False):
-    # Running in a PyInstaller bundle
-    bundle_dir = sys._MEIPASS
-else:
-    # Running in a normal Python environment
-    bundle_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Set GDAL_DATA environment variable
-os.environ['GDAL_DATA'] = os.path.join(bundle_dir, 'Library', 'share', 'gdal')
 
 # Use the resource_path function for all your data files
 precincts = gpd.read_file(resource_path('Police Precincts/geo_export_285d695e-252a-4bd6-b18d-ab8f95aa63f9.shp'))
@@ -99,9 +88,9 @@ folium.GeoJson(
 # Add layer control for choropleth layers
 folium.LayerControl().add_to(m)
 
-# Save the map to an HTML file
-html_file = 'nyc_demographics_and_precincts.html'
+# Save the map to an HTML file in a location accessible to the executable
+html_file = os.path.join(os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.getcwd(), 'nyc_demographics_and_precincts.html')
 m.save(html_file)
 
 # Automatically open the HTML file in the default web browser
-webbrowser.open(html_file)
+webbrowser.open('file://' + html_file)
