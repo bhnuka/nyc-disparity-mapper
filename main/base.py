@@ -5,6 +5,7 @@ import geopandas as gpd
 import folium
 import webbrowser
 import pandas as pd
+from jinja2 import Template
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -70,8 +71,8 @@ zipcodes_2011 = zipcodes.merge(data_2011, left_on='modzcta', right_on='ZCTA', ho
 zipcodes_2016 = zipcodes.merge(data_2016, left_on='modzcta', right_on='ZCTA', how='left')
 zipcodes_2022 = zipcodes.merge(data_2022, left_on='modzcta', right_on='ZCTA', how='left')
 
-# Function to create a folium map
-def create_map(name, columns, zipcodes_data, precincts_data, year):
+# Function to create a folium map and return its HTML
+def create_map_html(columns, zipcodes_data, precincts_data, year):
     # Create a base map centered on NYC with white background
     m = folium.Map(location=[40.7128, -74.0060], zoom_start=11, tiles=None)
     folium.TileLayer('cartodbpositron', name='Light Map', overlay=False, control=False).add_to(m)
@@ -86,7 +87,7 @@ def create_map(name, columns, zipcodes_data, precincts_data, year):
             'fillColor': 'white',
             'color': 'white',
             'weight': 1,
-            'fillOpacity': 1,
+            'fillOpacity': 0,
         },
         overlay=False,
         control=False
@@ -100,7 +101,7 @@ def create_map(name, columns, zipcodes_data, precincts_data, year):
             'fillColor': feature['properties'].get('fill', '#ff0000'),
             'color': 'black',
             'weight': 0,
-            'fillOpacity': 1,
+            'fillOpacity': 0.5,
         }
     ).add_to(m)
 
@@ -109,8 +110,14 @@ def create_map(name, columns, zipcodes_data, precincts_data, year):
         if is_precinct:
             geo_data = precincts_data
             key_on = 'feature.properties.precinct'
-            # Modify the name for Black Stopped Rate
-            layer_name = f"Black Stopped Rate ({year})"
+            if column.startswith('Black Stopped Rate'):
+                layer_name = f"Black Stopped Rate ({year})"
+            elif column == 'Public Schools':
+                layer_name = f"Public Schools ({year})"
+            elif column == 'Parks':
+                layer_name = f"Parks ({year})"
+            else:
+                layer_name = f"{column.replace('_', ' ').title()} ({year})"
         else:
             geo_data = zipcodes_data
             key_on = 'feature.properties.modzcta'
@@ -118,12 +125,12 @@ def create_map(name, columns, zipcodes_data, precincts_data, year):
 
         choro = folium.Choropleth(
             geo_data=geo_data,
-            name=layer_name,  # Use the modified layer_name here
+            name=layer_name,
             data=data,
             columns=['ZCTA' if not is_precinct else 'Precinct', column],
             key_on=key_on,
             fill_color='YlOrRd',
-            fill_opacity=1,
+            fill_opacity=0.5,
             line_opacity=0,
             overlay=False,
             show=False  # Ensure the overlay is turned off by default
@@ -135,7 +142,7 @@ def create_map(name, columns, zipcodes_data, precincts_data, year):
 
     # Create and add choropleth layers
     for column in columns:
-        if column.startswith('Black Stopped Rate'):
+        if column.startswith('Black Stopped Rate') or column in ['Public Schools', 'Parks']:
             create_choropleth(column, precincts_data, is_precinct=True).add_to(m)
         else:
             create_choropleth(column, zipcodes_data).add_to(m)
@@ -143,60 +150,73 @@ def create_map(name, columns, zipcodes_data, precincts_data, year):
     # Add layer control with exclusive groups for choropleth layers
     folium.LayerControl(collapsed=False, exclusiveGroups=columns).add_to(m)
 
-    # Save the map to an HTML file
-    html_file = os.path.join(os.getcwd(), f'{name}.html')
-    m.save(html_file)
+    # Return the map's HTML as a string
+    return m._repr_html_()
 
 # Define columns for the maps
 base_columns = ['Median Home Value (Dollars)', "Bachelors degree or higher (Older than 25)", 'Population', 'White', 'Black or African American', 'Asian', 'Median Houshold Income (More than 200000 Dollars)']
 
 # Define year-specific columns
-columns_2011 = base_columns + ['Black Stopped Rate_2011']
-columns_2016 = base_columns + ['Black Stopped Rate_2016']
-columns_2022 = base_columns + ['Black Stopped Rate_2022']
+columns_2011 = base_columns + ['Black Stopped Rate_2011', 'Public Schools', 'Parks']
+columns_2016 = base_columns + ['Black Stopped Rate_2016', 'Public Schools', 'Parks']
+columns_2022 = base_columns + ['Black Stopped Rate_2022', 'Public Schools', 'Parks']
 
-# Create three maps with year-specific columns
-create_map('map2011', columns_2011, zipcodes_2011, precincts, '2011')
-create_map('map2016', columns_2016, zipcodes_2016, precincts, '2016')
-create_map('map2022', columns_2022, zipcodes_2022, precincts, '2022')
+# Create the maps' HTML
+map_html_2011 = create_map_html(columns_2011, zipcodes_2011, precincts, '2011')
+map_html_2016 = create_map_html(columns_2016, zipcodes_2016, precincts, '2016')
+map_html_2022 = create_map_html(columns_2022, zipcodes_2022, precincts, '2022')
 
-# Create a combined HTML file
-combined_html = """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>NYC Demographics and Stop and Frisk Data 2011-2016-2022</title>
-        <style>
-            .container {
-                display: flex;
-            }
-            .map {
-                width: 33.33%;
-                height: 600px;
-            }
-            iframe {
-                width: 100%;
-                height: 100%;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="map">
-                <iframe src="map2011.html" frameborder="0"></iframe>
-            </div>
-            <div class="map">
-                <iframe src="map2016.html" frameborder="0"></iframe>
-            </div>
-            <div class="map">
-                <iframe src="map2022.html" frameborder="0"></iframe>
-            </div>
+# Template for the combined HTML file
+combined_html_template = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC Demographics and Stop and Frisk Data 2011-2016-2022</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+        .container {
+            display: flex;
+            height: 100vh; /* Full viewport height */
+            width: 100vw; /* Full viewport width */
+        }
+        .map {
+            flex: 1; /* Take up one third of the container */
+            height: 100%;
+            position: relative;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="map">
+            {{ map_html_2011 }}
         </div>
-    </body>
-    </html>
-    """
+        <div class="map">
+            {{ map_html_2016 }}
+        </div>
+        <div class="map">
+            {{ map_html_2022 }}
+        </div>
+    </div>
+</body>
+</html>
+"""
+
+# Render the combined HTML
+template = Template(combined_html_template)
+combined_html = template.render(map_html_2011=map_html_2011, map_html_2016=map_html_2016, map_html_2022=map_html_2022)
 
 # Save the combined HTML file
 with open('combined_maps.html', 'w') as f:
