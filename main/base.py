@@ -7,6 +7,7 @@ import webbrowser
 import pandas as pd
 from jinja2 import Template
 
+
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -16,6 +17,7 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+
 
 # Load the combined redline JSON
 with open('redlining/combined_nyc_redline.json', 'r') as f:
@@ -70,6 +72,7 @@ data_2022['ZCTA'] = data_2022['ZCTA'].astype(str)
 zipcodes_2011 = zipcodes.merge(data_2011, left_on='modzcta', right_on='ZCTA', how='left')
 zipcodes_2016 = zipcodes.merge(data_2016, left_on='modzcta', right_on='ZCTA', how='left')
 zipcodes_2022 = zipcodes.merge(data_2022, left_on='modzcta', right_on='ZCTA', how='left')
+
 
 # Function to create a folium map and return its HTML
 def create_map_html(columns, zipcodes_data, precincts_data, year):
@@ -127,17 +130,17 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
             geo_data = precincts_data
             key_on = 'feature.properties.precinct'
             if column.startswith('Black Stopped Rate'):
-                layer_name = f"Black Stopped Rate ({year})"
+                layer_name = f"Black Stopped Rate"
             elif column == 'Public Schools':
-                layer_name = f"Public Schools ({year})"
+                layer_name = f"Public Schools"
             elif column == 'Parks':
-                layer_name = f"Parks ({year})"
+                layer_name = f"Parks "
             else:
-                layer_name = f"{column.replace('_', ' ').title()} ({year})"
+                layer_name = f"{column.replace('_', ' ').title()}"
         else:
             geo_data = zipcodes_data
             key_on = 'feature.properties.modzcta'
-            layer_name = f"{column.replace('_', ' ').title()} ({year})"
+            layer_name = f"{column.replace('_', ' ').title()}"
 
         choro = folium.Choropleth(
             geo_data=geo_data,
@@ -173,8 +176,10 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
     html = html.replace('height: 100.0%', 'height: 100vh')
     return html
 
+
 # Define columns for the maps
-base_columns = ['Median Home Value (Dollars)', "Bachelors degree or higher (Older than 25)", 'Population', 'White', 'Black or African American', 'Asian', 'Median Houshold Income (More than 200000 Dollars)']
+base_columns = ['Median Home Value (Dollars)', "Bachelors degree or higher (Older than 25)", 'Population', 'White',
+                'Black or African American', 'Asian', 'Median Houshold Income (More than 200000 Dollars)']
 
 # Define year-specific columns
 columns_2011 = base_columns + ['Black Stopped Rate_2011', 'Public Schools', 'Parks']
@@ -199,12 +204,28 @@ combined_html_template = """
             height: 100vh;
             display: flex;
         }
-        
-        #map2011, #map2022 {
+
+        .map-container {
             width: 50vw;
             height: 100vh;
+            position: relative;
         }
-        
+
+        .year-label {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 5px 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
         .leaflet-container {
             width: 50vw !important;
             height: 100vh !important;
@@ -218,8 +239,14 @@ combined_html_template = """
     </style>
 </head>
 <body>
-    <div id="map2011">{{ map_html_2011 }}</div>
-    <div id="map2022">{{ map_html_2022 }}</div>
+    <div class="map-container">
+        <div class="year-label">2011</div>
+        <div id="map2011">{{ map_html_2011 }}</div>
+    </div>
+    <div class="map-container">
+        <div class="year-label">2022</div>
+        <div id="map2022">{{ map_html_2022 }}</div>
+    </div>
     <script>
         window.addEventListener('load', () => {
             document.querySelectorAll('.leaflet-container').forEach(map => {
