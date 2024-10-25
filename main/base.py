@@ -322,8 +322,8 @@ template = Template(combined_html_template)
 combined_html = template.render(map_html_2011=map_html_2011, map_html_2016=map_html_2016, map_html_2022=map_html_2022)
 
 # Save the combined HTML file
-with open('combined_maps.html', 'w') as f:
+with open('nyc-disparity-map.html', 'w') as f:
     f.write(combined_html)
 
 # Automatically open the combined HTML file in the default web browser
-webbrowser.open('file://' + os.path.join(os.getcwd(), 'combined_maps.html'))
+webbrowser.open('file://' + os.path.join(os.getcwd(), 'nyc-disparity-map.html'))
