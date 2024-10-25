@@ -74,8 +74,24 @@ zipcodes_2022 = zipcodes.merge(data_2022, left_on='modzcta', right_on='ZCTA', ho
 # Function to create a folium map and return its HTML
 def create_map_html(columns, zipcodes_data, precincts_data, year):
     # Create a base map centered on NYC with white background
-    m = folium.Map(location=[40.7128, -74.0060], zoom_start=11, tiles=None)
-    folium.TileLayer('cartodbpositron', name='Light Map', overlay=False, control=False).add_to(m)
+    m = folium.Map(
+        location=[40.7128, -74.0060],
+        zoom_start=11,
+        tiles=None,
+        control_scale=True,
+        width="50vw",
+        height="100vh"
+    )
+
+    # Set map size to 100%
+    m._size = ("50vw", "100vh")
+
+    folium.TileLayer(
+        'cartodbpositron',
+        name='Light Map',
+        overlay=False,
+        control=False
+    ).add_to(m)
 
     # Create a mask for the five boroughs
     nyc_boundary = zipcodes_data.dissolve()
@@ -150,8 +166,12 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
     # Add layer control with exclusive groups for choropleth layers
     folium.LayerControl(collapsed=False, exclusiveGroups=columns).add_to(m)
 
-    # Return the map's HTML as a string
-    return m._repr_html_()
+    # Get the HTML but modify it to use relative sizing
+    html = m.get_root().render()
+    # Remove any fixed width/height settings that might be injected
+    html = html.replace('width: 100.0%', 'width: 50vw')
+    html = html.replace('height: 100.0%', 'height: 100vh')
+    return html
 
 # Define columns for the maps
 base_columns = ['Median Home Value (Dollars)', "Bachelors degree or higher (Older than 25)", 'Population', 'White', 'Black or African American', 'Asian', 'Median Houshold Income (More than 200000 Dollars)']
@@ -169,47 +189,44 @@ map_html_2022 = create_map_html(columns_2022, zipcodes_2022, precincts, '2022')
 # Template for the combined HTML file
 combined_html_template = """
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYC Demographics and Stop and Frisk Data 2011-2016-2022</title>
     <style>
         body, html {
             margin: 0;
             padding: 0;
-            height: 100%;
-            width: 100%;
-        }
-        .container {
+            width: 100vw;
+            height: 100vh;
             display: flex;
-            height: 100vh; /* Full viewport height */
-            width: 100vw; /* Full viewport width */
         }
-        .map {
-            flex: 1; /* Take up one third of the container */
-            height: 100%;
-            position: relative;
+        
+        #map2011, #map2022 {
+            width: 50vw;
+            height: 100vh;
         }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+        
+        .leaflet-container {
+            width: 50vw !important;
+            height: 100vh !important;
+        }
+
+        /* Move layer control to top left */
+        .leaflet-top.leaflet-right {
+            right: auto !important;
+            left: 10px !important;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="map">
-            {{ map_html_2011 }}
-        </div>
-        <div class="map">
-            {{ map_html_2016 }}
-        </div>
-        <div class="map">
-            {{ map_html_2022 }}
-        </div>
-    </div>
+    <div id="map2011">{{ map_html_2011 }}</div>
+    <div id="map2022">{{ map_html_2022 }}</div>
+    <script>
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.leaflet-container').forEach(map => {
+                if (map._leaflet_map) map._leaflet_map.invalidateSize();
+            });
+        });
+    </script>
 </body>
 </html>
 """
