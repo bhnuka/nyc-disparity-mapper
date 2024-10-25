@@ -178,8 +178,8 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
 
 
 # Define columns for the maps
-base_columns = ['Median Home Value (Dollars)', "Bachelors degree or higher (Older than 25)", 'Population', 'White',
-                'Black or African American', 'Asian', 'Median Houshold Income (More than 200000 Dollars)']
+base_columns = ['Median Home Value', "Bachelors degree or higher", 'Population', 'White',
+                'Black or African American', 'Asian', 'Median Household Income']
 
 # Define year-specific columns
 columns_2011 = base_columns + ['Black Stopped Rate_2011', 'Public Schools', 'Parks']
@@ -204,14 +204,14 @@ combined_html_template = """
             height: 100vh;
             display: flex;
         }
-
+        
         .map-container {
             width: 50vw;
             height: 100vh;
             position: relative;
         }
-
-        .year-label {
+        
+        .header-container {
             position: absolute;
             top: 10px;
             left: 50%;
@@ -222,10 +222,22 @@ combined_html_template = """
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             font-family: Arial, sans-serif;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .year-label {
             font-size: 16px;
             font-weight: bold;
         }
-
+        
+        .active-layer {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+        
         .leaflet-container {
             width: 50vw !important;
             height: 100vh !important;
@@ -240,18 +252,65 @@ combined_html_template = """
 </head>
 <body>
     <div class="map-container">
-        <div class="year-label">2011</div>
+        <div class="header-container">
+            <span class="year-label">2011</span>
+            <span class="active-layer" id="activeLayer2011">No overlay selected</span>
+        </div>
         <div id="map2011">{{ map_html_2011 }}</div>
     </div>
     <div class="map-container">
-        <div class="year-label">2022</div>
+        <div class="header-container">
+            <span class="year-label">2022</span>
+            <span class="active-layer" id="activeLayer2022">No overlay selected</span>
+        </div>
         <div id="map2022">{{ map_html_2022 }}</div>
     </div>
     <script>
-        window.addEventListener('load', () => {
-            document.querySelectorAll('.leaflet-container').forEach(map => {
-                if (map._leaflet_map) map._leaflet_map.invalidateSize();
+        function setupMapListeners() {
+            document.querySelectorAll('.map-container').forEach(container => {
+                const year = container.querySelector('.year-label').textContent;
+                const activeLayerElement = container.querySelector('.active-layer');
+                
+                // Find all radio inputs in the layer control for this map
+                const layerInputs = container.querySelectorAll('.leaflet-control-layers-selector[type="radio"]');
+                
+                layerInputs.forEach(input => {
+                    input.addEventListener('change', function() {
+                        if (this.checked) {
+                            // Get the label text associated with this radio input
+                            const labelText = this.nextElementSibling.textContent.trim();
+                            activeLayerElement.textContent = labelText;
+                        }
+                    });
+                });
+
+                // Also handle the redlining overlay checkbox
+                const redliningCheckbox = container.querySelector('.leaflet-control-layers-selector[type="checkbox"]');
+                if (redliningCheckbox) {
+                    redliningCheckbox.addEventListener('change', function() {
+                        const currentText = activeLayerElement.textContent;
+                        if (this.checked) {
+                            if (currentText === 'No overlay selected') {
+                                activeLayerElement.textContent = 'Redlining Overlay';
+                            } else {
+                                activeLayerElement.textContent = `${currentText} + Redlining`;
+                            }
+                        } else {
+                            if (currentText.includes(' + Redlining')) {
+                                activeLayerElement.textContent = currentText.replace(' + Redlining', '');
+                            } else if (currentText === 'Redlining Overlay') {
+                                activeLayerElement.textContent = 'No overlay selected';
+                            }
+                        }
+                    });
+                }
             });
+        }
+
+        // Wait for Leaflet controls to be fully loaded
+        window.addEventListener('load', () => {
+            // Give a small delay to ensure all Leaflet elements are rendered
+            setTimeout(setupMapListeners, 1000);
         });
     </script>
 </body>
