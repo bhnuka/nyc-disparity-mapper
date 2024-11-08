@@ -5,6 +5,7 @@ import geopandas as gpd
 import folium
 import webbrowser
 import pandas as pd
+import branca.colormap as cm
 from jinja2 import Template
 
 
@@ -126,6 +127,11 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
 
     # Function to create a choropleth layer
     def create_choropleth(column, data, is_precinct=False):
+        # Define a color scale based on data values
+        min_val = data[column].min()
+        max_val = data[column].max()
+        colormap = cm.linear.YlOrRd_09.scale(min_val, max_val)
+
         if is_precinct:
             geo_data = precincts_data
             key_on = 'feature.properties.precinct'
@@ -134,7 +140,7 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
             elif column == 'Public Schools':
                 layer_name = f"Public Schools"
             elif column == 'Parks':
-                layer_name = f"Parks "
+                layer_name = f"Parks"
             else:
                 layer_name = f"{column.replace('_', ' ').title()}"
         else:
@@ -153,10 +159,17 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
             line_opacity=0,
             overlay=False,
             show=False  # Ensure the overlay is turned off by default
-        )
+        ).add_to(m)
+
+        # Add colormap legend
+        colormap.caption = f"{layer_name} ({min_val} - {max_val})"
+        colormap.add_to(m)
+
+        # Remove the color map added by folium's Choropleth
         for key in choro._children:
             if key.startswith('color_map'):
                 del (choro._children[key])
+
         return choro
 
     # Create and add choropleth layers
@@ -204,13 +217,13 @@ combined_html_template = """
             height: 100vh;
             display: flex;
         }
-        
+
         .map-container {
             width: 50vw;
             height: 100vh;
             position: relative;
         }
-        
+
         .header-container {
             position: absolute;
             top: 10px;
@@ -226,18 +239,18 @@ combined_html_template = """
             gap: 10px;
             align-items: center;
         }
-        
+
         .year-label {
             font-size: 16px;
             font-weight: bold;
         }
-        
+
         .active-layer {
             font-size: 14px;
             color: #666;
             font-style: italic;
         }
-        
+
         .leaflet-container {
             width: 50vw !important;
             height: 100vh !important;
@@ -270,10 +283,10 @@ combined_html_template = """
             document.querySelectorAll('.map-container').forEach(container => {
                 const year = container.querySelector('.year-label').textContent;
                 const activeLayerElement = container.querySelector('.active-layer');
-                
+
                 // Find all radio inputs in the layer control for this map
                 const layerInputs = container.querySelectorAll('.leaflet-control-layers-selector[type="radio"]');
-                
+
                 layerInputs.forEach(input => {
                     input.addEventListener('change', function() {
                         if (this.checked) {
