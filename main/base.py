@@ -5,7 +5,6 @@ import geopandas as gpd
 import folium
 import webbrowser
 import pandas as pd
-import branca.colormap as cm
 from jinja2 import Template
 
 
@@ -127,10 +126,6 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
 
     # Function to create a choropleth layer
     def create_choropleth(column, data, is_precinct=False):
-        # Define a color scale based on data values
-        min_val = data[column].min()
-        max_val = data[column].max()
-        colormap = cm.linear.YlOrRd_09.scale(min_val, max_val)
 
         if is_precinct:
             geo_data = precincts_data
@@ -160,15 +155,6 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
             overlay=False,
             show=False  # Ensure the overlay is turned off by default
         ).add_to(m)
-
-        # Add colormap legend
-        colormap.caption = f"{layer_name} ({min_val} - {max_val})"
-        colormap.add_to(m)
-
-        # Remove the color map added by folium's Choropleth
-        for key in choro._children:
-            if key.startswith('color_map'):
-                del (choro._children[key])
 
         return choro
 
