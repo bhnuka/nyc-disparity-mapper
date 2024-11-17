@@ -156,7 +156,14 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
             show=False  # Ensure the overlay is turned off by default
         ).add_to(m)
 
+        # Remove the color map added by folium's Choropleth
+        for key in choro._children:
+            if key.startswith('color_map'):
+                del (choro._children[key])
+
         return choro
+
+
 
     # Create and add choropleth layers
     for column in columns:
@@ -237,6 +244,29 @@ combined_html_template = """
             font-style: italic;
         }
 
+        .legend-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: white;
+            padding: 5px; /* Smaller padding */
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-family: Arial, sans-serif;
+            font-size: 12px; /* Smaller font size */
+            text-align: center; /* Center the text */
+            max-width: 300px; /* Limit the width */
+        }
+
+        .legend-container img {
+            background-color: transparent; /* Ensure transparent background */
+            width: 100%; /* Scale down further */
+            height: auto;
+            display: block;
+            margin: 5px auto; /* Center the image and reduce margin */
+        }
+
         .leaflet-container {
             width: 50vw !important;
             height: 100vh !important;
@@ -255,12 +285,18 @@ combined_html_template = """
             <span class="year-label">2011</span>
             <span class="active-layer" id="activeLayer2011">No overlay selected</span>
         </div>
+        <div class="legend-container" id="legend2011">
+            Legend
+        </div>
         <div id="map2011">{{ map_html_2011 }}</div>
     </div>
     <div class="map-container">
         <div class="header-container">
             <span class="year-label">2022</span>
             <span class="active-layer" id="activeLayer2022">No overlay selected</span>
+        </div>
+        <div class="legend-container" id="legend2022">
+            Legend
         </div>
         <div id="map2022">{{ map_html_2022 }}</div>
     </div>
@@ -269,24 +305,43 @@ combined_html_template = """
             document.querySelectorAll('.map-container').forEach(container => {
                 const year = container.querySelector('.year-label').textContent;
                 const activeLayerElement = container.querySelector('.active-layer');
+                const legendContainer = container.querySelector('.legend-container');
+
+                // Define the mapping between overlays and SVG paths
+                const svgMapping = {
+                    2011: {
+                        'Parks': 'svgs/2011/parks.svg'
+                    },
+                    2022: {
+                        'Parks': 'svgs/2022/parks.svg'
+                    }
+                };
 
                 // Find all radio inputs in the layer control for this map
                 const layerInputs = container.querySelectorAll('.leaflet-control-layers-selector[type="radio"]');
 
                 layerInputs.forEach(input => {
-                    input.addEventListener('change', function() {
+                    input.addEventListener('change', function () {
                         if (this.checked) {
                             // Get the label text associated with this radio input
                             const labelText = this.nextElementSibling.textContent.trim();
                             activeLayerElement.textContent = labelText;
+
+                            // Check if an SVG exists for the selected overlay
+                            const svgPath = svgMapping[year]?.[labelText];
+                            if (svgPath) {
+                                legendContainer.innerHTML = `<strong>Legend</strong><br><img src="${svgPath}" alt="Legend for ${labelText}" style="max-width: 100%; height: auto;">`;
+                            } else {
+                                legendContainer.innerHTML = `<strong>Legend</strong>`;
+                            }
                         }
                     });
                 });
 
-                // Also handle the redlining overlay checkbox
+                // Handle the redlining overlay checkbox (if applicable)
                 const redliningCheckbox = container.querySelector('.leaflet-control-layers-selector[type="checkbox"]');
                 if (redliningCheckbox) {
-                    redliningCheckbox.addEventListener('change', function() {
+                    redliningCheckbox.addEventListener('change', function () {
                         const currentText = activeLayerElement.textContent;
                         if (this.checked) {
                             if (currentText === 'No overlay selected') {
@@ -301,6 +356,9 @@ combined_html_template = """
                                 activeLayerElement.textContent = 'No overlay selected';
                             }
                         }
+
+                        // Clear legend for Redlining as no specific SVG is associated
+                        legendContainer.innerHTML = `<strong>Legend</strong>`;
                     });
                 }
             });
