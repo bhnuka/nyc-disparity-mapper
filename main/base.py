@@ -126,7 +126,8 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
             'weight': 0,
             'fillOpacity': 0.7,
         },
-        pane="redliningPane"  # Assign to the custom pane
+        pane="redliningPane",  # Assign to the custom pane
+        show=False
     ).add_to(m)
 
     # Function to create a choropleth layer
@@ -315,70 +316,72 @@ combined_html_template = """
         const svgMapping = {
             2011: {
                 'Parks': 'svgs/2011/parks.svg',
-                'Redlining': 'svgs/2011/redlining.svg'
+                'Redlining Overlay': 'svgs/2011/redlining.svg',
+                'Median Home Value': 'svgs/2011/homevalue.svg'
             },
             2022: {
                 'Parks': 'svgs/2022/parks.svg',
-                'Redlining': 'svgs/2022/redlining.svg'
+                'Redlining Overlay': 'svgs/2022/redlining.svg',
+                'Median Home Value': 'svgs/2022/homevalue.svg'
             }
         };
 
-        // Function to update the legend
-        function updateLegend(labelText, year) {
-            const svgPath = svgMapping[year]?.[labelText];
-            if (svgPath) {
-                legendContainer.innerHTML = `<strong>Legend</strong><br><img src="${svgPath}" alt="Legend for ${labelText}" style="max-width: 100%; height: auto;">`;
-            } else {
-                legendContainer.innerHTML = `<strong>Legend</strong>`;
-            }
+        // Keep track of active overlays
+        const activeOverlays = new Set();
+
+        // Function to refresh the legend based on active overlays
+        function refreshLegend() {
+            let legendHtml = `<strong>Legend</strong>`;
+            activeOverlays.forEach(overlay => {
+                const svgPath = svgMapping[year]?.[overlay];
+                if (svgPath) {
+                    legendHtml += `<br><img src="${svgPath}" alt="Legend for ${overlay}" style="max-width: 100%; height: auto;">`;
+                }
+            });
+            legendContainer.innerHTML = legendHtml;
         }
 
-        // Find all radio inputs in the layer control for this map
-        const layerInputs = container.querySelectorAll('.leaflet-control-layers-selector[type="radio"]');
-
-        layerInputs.forEach(input => {
+        // Handle radio button changes (exclusive overlays like Median Home Value, Parks)
+        const radioInputs = container.querySelectorAll('.leaflet-control-layers-selector[type="radio"]');
+        radioInputs.forEach(input => {
             input.addEventListener('change', function () {
                 if (this.checked) {
-                    // Get the label text associated with this radio input
                     const labelText = this.nextElementSibling.textContent.trim();
-                    activeLayerElement.textContent = labelText;
-
-                    // Update the legend with the selected overlay
-                    updateLegend(labelText, year);
+                    activeOverlays.clear(); // Clear all active overlays for radio buttons
+                    activeOverlays.add(labelText); // Add the selected overlay
+                    activeLayerElement.textContent = labelText; // Update active layer text
+                    refreshLegend(); // Update legend
                 }
             });
         });
 
-        // Handle the redlining overlay checkbox
-        const redliningCheckbox = container.querySelector('.leaflet-control-layers-selector[type="checkbox"]');
-        if (redliningCheckbox) {
-            redliningCheckbox.addEventListener('change', function () {
-                const redliningLabel = 'Redlining';
+        // Handle checkbox changes (non-exclusive overlays like Redlining Overlay)
+        const checkboxInputs = container.querySelectorAll('.leaflet-control-layers-selector[type="checkbox"]');
+        checkboxInputs.forEach(input => {
+            input.addEventListener('change', function () {
+                const labelText = this.nextElementSibling.textContent.trim();
+
                 if (this.checked) {
-                    // Add Redlining SVG to the legend without replacing the current legend
-                    const redliningSvgPath = svgMapping[year]?.[redliningLabel];
-                    if (redliningSvgPath && !legendContainer.innerHTML.includes(redliningSvgPath)) {
-                        legendContainer.innerHTML += `<br><img src="${redliningSvgPath}" alt="Legend for Redlining Overlay" style="max-width: 100%; height: auto;">`;
-                    }
+                    activeOverlays.add(labelText); // Add the overlay to active set
                 } else {
-                    // Remove Redlining SVG from the legend if unchecked
-                    const redliningSvgPath = svgMapping[year]?.[redliningLabel];
-                    if (redliningSvgPath) {
-                        const redliningHtml = `<br><img src="${redliningSvgPath}" alt="Legend for Redlining Overlay" style="max-width: 100%; height: auto;">`;
-                        legendContainer.innerHTML = legendContainer.innerHTML.replace(redliningHtml, '');
-                    }
+                    activeOverlays.delete(labelText); // Remove the overlay from active set
                 }
+
+                refreshLegend(); // Update legend
             });
-        }
+        });
     });
 }
 
+// Wait for Leaflet controls to be fully loaded
+window.addEventListener('load', () => {
+    // Give a small delay to ensure all Leaflet elements are rendered
+    setTimeout(setupMapListeners, 1000);
+});
 
-        // Wait for Leaflet controls to be fully loaded
-        window.addEventListener('load', () => {
-            // Give a small delay to ensure all Leaflet elements are rendered
-            setTimeout(setupMapListeners, 1000);
-        });
+
+
+
     </script>
 </body>
 </html>
