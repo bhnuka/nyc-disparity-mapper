@@ -112,7 +112,11 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
         control=False
     ).add_to(m)
 
-    # Add the redline JSON data as an overlay
+    # Create a custom pane for Redlining Overlay
+    redlining_pane = folium.map.CustomPane("redliningPane", z_index=650)
+    m.add_child(redlining_pane)
+
+    # Add the redline JSON data as an overlay to the custom pane
     folium.GeoJson(
         redline_data,
         name='Redlining Overlay',
@@ -120,8 +124,9 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
             'fillColor': feature['properties'].get('fill', '#ff0000'),
             'color': 'black',
             'weight': 0,
-            'fillOpacity': 0.5,
-        }
+            'fillOpacity': 0.7,
+        },
+        pane="redliningPane"  # Assign to the custom pane
     ).add_to(m)
 
     # Function to create a choropleth layer
@@ -179,6 +184,7 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
     html = html.replace('width: 100.0%', 'width: 50vw')
     html = html.replace('height: 100.0%', 'height: 100vh')
     return html
+
 
 
 # Define columns for the maps
