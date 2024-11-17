@@ -739,7 +739,7 @@ black2011: `<svg xmlns="http://www.w3.org/2000/svg" width="250" height="50" styl
         <rect x="25" y="20" width="200" height="10" fill="url(#branca-gradient-homevalue-2022)" stroke="black" stroke-width="1" />
         <text x="25" y="15" font-family="Arial" font-size="12" text-anchor="middle" fill="black">100000</text>
         <text x="125" y="15" font-family="Arial" font-size="12" text-anchor="middle" fill="black">500000</text>
-        <text x="225" y="15" font-family="Arial" font-size="12" text-anchor="middle" fill="black">+2000000</text>
+        <text x="225" y="15" font-family="Arial" font-size="12" text-anchor="middle" fill="black">2000000</text>
         <text x="125" y="45" font-family="Arial" font-size="12" text-anchor="middle" fill="black">Median Home Value</text>
     </svg>`,
 
