@@ -12,9 +12,9 @@
   <!-- Gradient Bar -->
   <rect x="50" y="40" width="400" height="20" fill="url(#branca-gradient)" stroke="black" stroke-width="1" />
   <!-- Scale Numbers -->
-  <text x="50" y="35" font-family="Arial" font-size="20" text-anchor="middle" fill="black">4</text>
-  <text x="250" y="35" font-family="Arial" font-size="20" text-anchor="middle" fill="black">39874</text>
-  <text x="450" y="35" font-family="Arial" font-size="20" text-anchor="middle" fill="black">79744</text>
+  <text x="50" y="30" font-family="Arial" font-size="30" text-anchor="middle" fill="black">4</text>
+  <text x="250" y="30" font-family="Arial" font-size="30" text-anchor="middle" fill="black">28</text>
+  <text x="450" y="30" font-family="Arial" font-size="30" text-anchor="middle" fill="black">52</text>
   <!-- Title -->
-  <text x="250" y="85" font-family="Arial" font-size="20" text-anchor="middle" fill="black">Black</text>
+  <text x="250" y="90" font-family="Arial" font-size="30" text-anchor="middle" fill="black">Public Schools</text>
 </svg>
