@@ -286,7 +286,7 @@ combined_html_template = """
         font-family: Arial, sans-serif;
         font-size: 12px; /* Smaller font size */
         text-align: center; /* Center the text */
-        max-width: 250px; /* Limit the width */
+        max-width: 270px; /* Limit the width */
         display: none; /* Initially hidden */
     }
 
@@ -308,6 +308,71 @@ combined_html_template = """
             right: auto !important;
             left: 10px !important;
         }
+        
+        .help-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .help-button:hover {
+            background-color: #0056b3;
+        }
+
+        .help-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .help-modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+        }
+
+        .close-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .close-button:hover {
+            background-color: #a71d2a;
+        }
+        
+        .help-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .help-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -320,8 +385,8 @@ combined_html_template = """
             <strong>Legend</strong>
         </div>
         <div class="redlining-legend-container" id="redliningLegend2011">
-            <strong>Redlining</strong>
-            <<svg xmlns="http://www.w3.org/2000/svg" width="250" height="50" style="background-color: transparent;">
+            <strong> Redlining </strong>
+            <svg xmlns="http://www.w3.org/2000/svg" width="250" height="50" style="background-color: transparent;">
             <defs>
                 <linearGradient id="branca-gradient-redlining-2011-inline" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" style="stop-color: #b8d1af;" />
@@ -347,7 +412,7 @@ combined_html_template = """
             <strong>Legend</strong>
         </div>
         <div class="redlining-legend-container" id="redliningLegend2022">
-            <strong>Redlining</strong>
+            <strong> Redlining </strong>
             <svg xmlns="http://www.w3.org/2000/svg" width="250" height="50" style="background-color: transparent;">
             <defs>
                 <linearGradient id="branca-gradient-redlining-2022-inline" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -365,6 +430,44 @@ combined_html_template = """
         </div>
         <div id="map2022">{{ map_html_2022 }}</div>
     </div>
+    <!-- Help Button -->
+    <button class="help-button" id="helpButton">Help</button>
+
+    <!-- Help Modal -->
+    <div class="help-modal" id="helpModal">
+        <div class="help-modal-content">
+            <p>
+                For more details on the project, including references, overlay overviews and more, please go to
+                <a class="help-link" href="https://github.com/bhnuka/nyc-disparity-mapper" target="_blank">
+                    this link
+                </a>
+            </p>
+            <button class="close-button" id="closeButton">Close</button>
+        </div>
+    </div>
+    <script>
+        // Get modal elements
+        const helpButton = document.getElementById('helpButton');
+        const helpModal = document.getElementById('helpModal');
+        const closeButton = document.getElementById('closeButton');
+
+        // Show the modal when the Help button is clicked
+        helpButton.addEventListener('click', () => {
+            helpModal.style.display = 'flex';
+        });
+
+        // Close the modal when the Close button is clicked
+        closeButton.addEventListener('click', () => {
+            helpModal.style.display = 'none';
+        });
+
+        // Close the modal when clicking outside the modal content
+        window.addEventListener('click', (event) => {
+            if (event.target === helpModal) {
+                helpModal.style.display = 'none';
+            }
+        });
+    </script>
     <script>
     function setupMapListeners() {
         const svgTemplates = {
