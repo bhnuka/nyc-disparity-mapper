@@ -124,7 +124,7 @@ def create_map_html(columns, zipcodes_data, precincts_data, year):
             'fillColor': feature['properties'].get('fill', '#ff0000'),
             'color': 'black',
             'weight': 0,
-            'fillOpacity': 0.7,
+            'fillOpacity': 0.6,
         },
         pane="redliningPane",  # Assign to the custom pane
         show=False
@@ -250,27 +250,51 @@ combined_html_template = """
         }
 
         .legend-container {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            background-color: white;
-            padding: 5px; /* Smaller padding */
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            font-family: Arial, sans-serif;
-            font-size: 12px; /* Smaller font size */
-            text-align: center; /* Center the text */
-            max-width: 300px; /* Limit the width */
-        }
+        position: absolute;
+        top: 260px; /* Adjust to place below the layer control */
+        left: 10px; /* Align with the layer control */
+        z-index: 1000;
+        background-color: white;
+        padding: 5px; /* Smaller padding */
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+        font-size: 12px; /* Smaller font size */
+        text-align: center; /* Center the text */
+        max-width: 300px; /* Limit the width */
+    }
 
-        .legend-container img {
-            background-color: transparent; /* Ensure transparent background */
-            width: 100%; /* Scale down further */
-            height: auto;
-            display: block;
-            margin: 5px auto; /* Center the image and reduce margin */
-        }
+    .legend-container img {
+        background-color: transparent; /* Ensure transparent background */
+        width: 100%; /* Scale down further */
+        height: auto;
+        display: block;
+        margin: 5px auto; /* Center the image and reduce margin */
+    }
+
+    .redlining-legend-container {
+        position: absolute;
+        top: 360px; /* Adjust to place below the main legend container */
+        left: 10px; /* Align with the layer control */
+        z-index: 1000;
+        background-color: white;
+        padding: 5px; /* Smaller padding */
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+        font-size: 12px; /* Smaller font size */
+        text-align: center; /* Center the text */
+        max-width: 250px; /* Limit the width */
+        display: none; /* Initially hidden */
+    }
+
+    .redlining-legend-container img {
+        background-color: transparent; /* Ensure transparent background */
+        width: 80%; /* Scale down further */
+        height: auto;
+        display: block;
+        margin: 5px auto; /* Center the image and reduce margin */
+    }
 
         .leaflet-container {
             width: 50vw !important;
@@ -286,42 +310,49 @@ combined_html_template = """
 </head>
 <body>
     <div class="map-container">
-        <div class="header-container">
-            <span class="year-label">2011</span>
-            <span class="active-layer" id="activeLayer2011">No overlay selected</span>
-        </div>
-        <div class="legend-container" id="legend2011">
-            Legend
-        </div>
-        <div id="map2011">{{ map_html_2011 }}</div>
+    <div class="header-container">
+        <span class="year-label">2011</span>
+        <span class="active-layer" id="activeLayer2011">No overlay selected</span>
     </div>
-    <div class="map-container">
-        <div class="header-container">
-            <span class="year-label">2022</span>
-            <span class="active-layer" id="activeLayer2022">No overlay selected</span>
-        </div>
-        <div class="legend-container" id="legend2022">
-            Legend
-        </div>
-        <div id="map2022">{{ map_html_2022 }}</div>
+    <div class="legend-container" id="legend2011">
+        <strong>Legend</strong>
     </div>
+    <div class="redlining-legend-container" id="redliningLegend2011">
+        <strong>Redlining</strong>
+        <img src="svgs/2011/redlining.svg" alt="Legend for Redlining">
+    </div>
+    <div id="map2011">{{ map_html_2011 }}</div>
+</div>
+<div class="map-container">
+    <div class="header-container">
+        <span class="year-label">2022</span>
+        <span class="active-layer" id="activeLayer2022">No overlay selected</span>
+    </div>
+    <div class="legend-container" id="legend2022">
+        <strong>Legend</strong>
+    </div>
+    <div class="redlining-legend-container" id="redliningLegend2022">
+        <strong>Redlining</strong>
+        <img src="svgs/2022/redlining.svg" alt="Legend for Redlining">
+    </div>
+    <div id="map2022">{{ map_html_2022 }}</div>
+</div>
     <script>
         function setupMapListeners() {
     document.querySelectorAll('.map-container').forEach(container => {
         const year = container.querySelector('.year-label').textContent;
         const activeLayerElement = container.querySelector('.active-layer');
         const legendContainer = container.querySelector('.legend-container');
+        const redliningLegendContainer = container.querySelector(`#redliningLegend${year}`);
 
         // Define the mapping between overlays and SVG paths
         const svgMapping = {
             2011: {
                 'Parks': 'svgs/2011/parks.svg',
-                'Redlining Overlay': 'svgs/2011/redlining.svg',
                 'Median Home Value': 'svgs/2011/homevalue.svg'
             },
             2022: {
                 'Parks': 'svgs/2022/parks.svg',
-                'Redlining Overlay': 'svgs/2022/redlining.svg',
                 'Median Home Value': 'svgs/2022/homevalue.svg'
             }
         };
@@ -339,6 +370,11 @@ combined_html_template = """
                 }
             });
             legendContainer.innerHTML = legendHtml;
+        }
+
+        // Function to toggle the Redlining Legend
+        function toggleRedliningLegend(visible) {
+            redliningLegendContainer.style.display = visible ? 'block' : 'none';
         }
 
         // Handle radio button changes (exclusive overlays like Median Home Value, Parks)
@@ -367,7 +403,12 @@ combined_html_template = """
                     activeOverlays.delete(labelText); // Remove the overlay from active set
                 }
 
-                refreshLegend(); // Update legend
+                // If Redlining Overlay is toggled, update its legend visibility
+                if (labelText === 'Redlining Overlay') {
+                    toggleRedliningLegend(this.checked);
+                }
+
+                refreshLegend(); // Update main legend
             });
         });
     });
@@ -378,10 +419,6 @@ window.addEventListener('load', () => {
     // Give a small delay to ensure all Leaflet elements are rendered
     setTimeout(setupMapListeners, 1000);
 });
-
-
-
-
     </script>
 </body>
 </html>
