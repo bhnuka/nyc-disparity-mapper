@@ -437,6 +437,8 @@ combined_html_template = """
     <div class="help-modal" id="helpModal">
         <div class="help-modal-content">
             <p>
+                Please note that if an area is black, there is no available data for that area <br><br>
+                
                 For more details on the project, including references, overlay overviews and more, please go to
                 <a class="help-link" href="https://github.com/bhnuka/nyc-disparity-mapper" target="_blank">
                     this link
