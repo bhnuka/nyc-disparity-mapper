@@ -19,6 +19,7 @@ Adjust the overlays in the top left of each respective map accordingly.
 ## Additional Notes
 1. Black areas indicate that there was no information provided for these areas.
 2. Red highlights the highest density, while pale yellow represents the lowest density.
+3. Pay close attention to the legends. They provide more information that you cannot discern from just looking at the spread of data.
 
 ## Justifications for Overlays
 The overlays selected for this map are designed to illuminate specific aspects of systemic inequality in New York City. Each overlay provides context for understanding the historical and contemporary factors shaping the city's disparities:
@@ -55,7 +56,7 @@ The overlays selected for this map are designed to illuminate specific aspects o
    - Shows the number of public schools within precincts.
    - Highlights gaps in educational infrastructure, correlating with income and racial disparities.
 
-Each of these overlays provides a crucial piece of the puzzle in understanding how systemic inequality manifests across different facets of urban life in New York City. Together, they paint a comprehensive picture of how historical and structural inequities continue to shape the city's neighborhoods.
+Each of these overlays provides a crucial piece of the puzzle in understanding how systemic inequality manifests across different facets of urban life in New York City. Together, they paint a comprehensive picture of how historical and structural inequities continue to shape the city's neighborhoods. 
 
 ## Sample Use Cases
 
