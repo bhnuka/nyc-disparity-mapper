@@ -73,3 +73,8 @@ Each of these overlays provides a crucial piece of the puzzle in understanding h
 5. **Tracking Real Estate Trends**:
    - Compare the **Median Home Value** overlays from 2011 to 2022 to assess how real estate prices have changed over time.
    - Investigate neighborhoods experiencing gentrification or housing affordability crises, linking these trends to broader systemic inequalities.
+
+## Data Sources Used
+
+1. [United States Census Bureau](https://data.census.gov/)
+2. [NYC OpenData](https://opendata.cityofnewyork.us/data/)
