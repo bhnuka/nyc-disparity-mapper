@@ -7,9 +7,14 @@ This project aims to visualise the systemic inequalities in New York City by hig
 ## Guide
 
 ## Setup Guide
-1. Go to this link [NYC Disparity Mapper](https://github.com/bhnuka/nyc-disparity-mapper/releases/tag/v3)
+Go to the following link [NYC Disparity Mapper](https://bhnuka.github.io/nyc-disparity-mapper/main/nyc-disparity-map.html)
+
+Alternatively,
+1. Go to the following link [NYC Disparity Mapper Releases](https://github.com/bhnuka/nyc-disparity-mapper/releases/tag/v3)
 2. Download `nyc-disparity-mapper.html`
-3. Adjust the overlays in the top left of each respective map accordingly.
+3. Open the file
+
+Adjust the overlays in the top left of each respective map accordingly.
 
 ## Additional Notes
 1. Black areas indicate that there was no information provided for these areas.
