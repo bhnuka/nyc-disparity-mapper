@@ -83,8 +83,8 @@ Each of these overlays provides a crucial piece of the puzzle in understanding h
 ## Troubleshooting
 
 If you encounter any issues, try this:
-1) Fullscreen the window with the map
-2) Refresh the window
-3) Wait 10 seconds, then try adjusting overlays again
+1. Fullscreen the window with the map
+2. Refresh the window
+3. Wait 10 seconds, then try adjusting overlays again
 
 If issues persist, please do contact me, at me LinkedIn linked on my profile 
