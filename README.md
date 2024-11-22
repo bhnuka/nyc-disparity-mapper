@@ -62,15 +62,11 @@ Each of these overlays provides a crucial piece of the puzzle in understanding h
    - Combine the **Redlining** and **Median Home Value** overlays to examine how historical redlining policies have influenced modern-day property values.
    - Focus on areas with historically low investment to identify neighborhoods still experiencing disinvestment and neglect.
 
-3. **Investigating Educational Disparities**:
-   - Utiliae the **Public Schools** and **College-Level Education** overlays to correlate the number of schools with the percentage of residents achieving higher education.
-   - Highlight areas with low public school density and low college attainment rates to advocate for increased educational funding and resources.
-
-4. **Assessing Income Inequality**:
+3. **Assessing Income Inequality**:
    - Overlay **Median Income** with **Ethnic Composition** to explore how race correlates with income disparities across neighborhoods.
    - Identify areas where minority populations are concentrated and income levels remain disproportionately low.
 
-5. **Tracking Real Estate Trends**:
+4. **Tracking Real Estate Trends**:
    - Compare the **Median Home Value** overlays from 2011 to 2022 to assess how real estate prices have changed over time.
    - Investigate neighborhoods experiencing gentrification or housing affordability crises, linking these trends to broader systemic inequalities.
 
