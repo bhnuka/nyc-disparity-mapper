@@ -2,7 +2,7 @@
 ## Bhanuka Bandara Ekanayake
 
 ## Purpose of the Map
-This project aims to visualize the systemic inequalities in New York City by highlighting disparities in public services, housing, education, policing, and demographics. By comparing data from 2011 and 2022, the map provides insights into how policies and systemic factors have influenced the distribution of resources across neighborhoods, particularly in historically marginalized communities. It serves as a tool for understanding how race, wealth, and public policy intersect to shape the urban landscape and public service access in New York City.
+This project aims to visualise the systemic inequalities in New York City by highlighting disparities in public services, housing, education, policing, and demographics. By comparing data from 2011 and 2022, the map provides insights into how policies and systemic factors have influenced the distribution of resources across neighborhoods, particularly in historically marginalised communities. It serves as a tool for understanding how race, wealth, and public policy intersect to shape the urban landscape and public service access in New York City.
 
 ## Guide
 
@@ -19,12 +19,12 @@ This project aims to visualize the systemic inequalities in New York City by hig
 The overlays selected for this map are designed to illuminate specific aspects of systemic inequality in New York City. Each overlay provides context for understanding the historical and contemporary factors shaping the city's disparities:
 
 1. **Redlining**:
-   - Visualizes the historical redlining maps created by the Home Owners' Loan Corporation (HOLC).
+   - Visualises the historical redlining maps created by the Home Owners' Loan Corporation (HOLC).
    - Highlights neighborhoods historically denied mortgage access due to racial composition, which has led to persistent economic and social inequalities.
 
 2. **Black Stopped Rate**:
    - Represents the percentage of police stops involving Black individuals within each precinct.
-   - Highlights the racial bias in policing practices, particularly in marginalized communities.
+   - Highlights the racial bias in policing practices, particularly in marginalised communities.
 
 3. **Median Income**:
    - Shows neighborhoods based on income levels, with darker areas representing higher-income households.
@@ -53,3 +53,23 @@ The overlays selected for this map are designed to illuminate specific aspects o
 Each of these overlays provides a crucial piece of the puzzle in understanding how systemic inequality manifests across different facets of urban life in New York City. Together, they paint a comprehensive picture of how historical and structural inequities continue to shape the city's neighborhoods.
 
 ## Sample Use Cases
+
+1. **Analysing Policing Patterns**:
+   - Use the **Black Stopped Rate** overlay to identify precincts with high rates of stops involving Black individuals.
+   - Compare patterns from 2011 to 2022 to evaluate the effectiveness of policy changes or community advocacy efforts in reducing racial bias in policing.
+
+2. **Evaluating Housing Inequality**:
+   - Combine the **Redlining** and **Median Home Value** overlays to examine how historical redlining policies have influenced modern-day property values.
+   - Focus on areas with historically low investment to identify neighborhoods still experiencing disinvestment and neglect.
+
+3. **Investigating Educational Disparities**:
+   - Utiliae the **Public Schools** and **College-Level Education** overlays to correlate the number of schools with the percentage of residents achieving higher education.
+   - Highlight areas with low public school density and low college attainment rates to advocate for increased educational funding and resources.
+
+4. **Assessing Income Inequality**:
+   - Overlay **Median Income** with **Ethnic Composition** to explore how race correlates with income disparities across neighborhoods.
+   - Identify areas where minority populations are concentrated and income levels remain disproportionately low.
+
+5. **Tracking Real Estate Trends**:
+   - Compare the **Median Home Value** overlays from 2011 to 2022 to assess how real estate prices have changed over time.
+   - Investigate neighborhoods experiencing gentrification or housing affordability crises, linking these trends to broader systemic inequalities.
