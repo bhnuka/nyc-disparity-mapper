@@ -87,4 +87,4 @@ If you encounter any issues, try this:
 2. Refresh the window
 3. Wait 10 seconds, then try adjusting overlays again
 
-If issues persist, please do contact me, at me LinkedIn linked on my profile 
+If any issues persist, please do contact me, at the LinkedIn profile linked on my account 
