@@ -603,9 +603,9 @@ black2011: `<svg xmlns="http://www.w3.org/2000/svg" width="250" height="50" styl
             </linearGradient>
         </defs>
         <rect x="25" y="20" width="200" height="10" fill="url(#branca-gradient-population-2011)" stroke="black" stroke-width="1" />
-        <text x="25" y="15" font-family="Arial" font-size="12" text-anchor="middle" fill="black">1</text>
-        <text x="125" y="15" font-family="Arial" font-size="12" text-anchor="middle" fill="black">11</text>
-        <text x="225" y="15" font-family="Arial" font-size="12" text-anchor="middle" fill="black">21</text>
+        <text x="25" y="15" font-family="Arial" font-size="12" text-anchor="middle" fill="black">2604</text>
+        <text x="125" y="15" font-family="Arial" font-size="12" text-anchor="middle" fill="black">53003</text>
+        <text x="225" y="15" font-family="Arial" font-size="12" text-anchor="middle" fill="black">103401</text>
         <text x="125" y="45" font-family="Arial" font-size="12" text-anchor="middle" fill="black">Population</text>
     </svg>`,
 
