@@ -440,7 +440,7 @@ combined_html_template = """
                 Please note that if an area is black, there is no available data for that area <br><br>
                 
                 For more details on the project, including references, overlay overviews and more, please go to
-                <a class="help-link" href="https://github.com/bhnuka/nyc-disparity-mapper" target="_blank">
+                <a class="help-link" href="https://bhnuka.github.io/nyc-disparity-mapper/" target="_blank">
                     this link
                 </a>
             </p>
