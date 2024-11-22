@@ -79,3 +79,12 @@ Each of these overlays provides a crucial piece of the puzzle in understanding h
 
 1. [United States Census Bureau](https://data.census.gov/)
 2. [NYC OpenData](https://opendata.cityofnewyork.us/data/)
+
+## Troubleshooting
+
+If you encounter any issues, try this:
+1) Fullscreen the window with the map
+2) Refresh the window
+3) Wait 10 seconds, then try adjusting overlays again
+
+If issues persist, please do contact me, at me LinkedIn linked on my profile 
